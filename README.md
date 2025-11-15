@@ -54,9 +54,3 @@ setInterval(atualizarTela, 1000);
 </section>
 <script type="module" src="script.js"></script>
 ```
-
-### Dicas
-
-- Utilize datas em formato reconhecido pelo construtor do `Date`, preferencialmente em inglês ou ISO (`2025-12-24T23:59:59-03:00`).
-- A classe calcula o tempo restante automaticamente, então você só precisa agendar `setInterval` para atualizar sua interface.
-- É possível criar várias instâncias simultâneas para contagens regressivas diferentes (Natal, Ano Novo etc.).
