@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-label="Countdown — Contagem regressiva em uma classe">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="sombra" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity=".28"/>
+    </filter>
+    <clipPath id="recorte"><rect width="428" height="252" rx="18"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="380" rx="24" fill="url(#bg)"/>
+  <circle cx="1105" cy="60" r="190" fill="#f2cc60" opacity="0.08"/>
+  <circle cx="110" cy="360" r="150" fill="#f2cc60" opacity="0.064"/>
+
+  <text x="72" y="148" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif" font-size="52" font-weight="800" letter-spacing="-1" fill="#ffffff">Countdown</text>
+  <text x="74" y="196" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif" font-size="24" font-weight="600" fill="#ffffff">Contagem regressiva em uma classe</text>
+  <text x="74" y="232" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif" font-size="17" fill="rgba(255,255,255,.78)">JavaScript · ES Modules · Date · getters</text>
+
+  <g font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif" font-size="14" font-weight="600">
+    <rect x="74" y="262" width="78" height="32" rx="16" fill="rgba(242,204,96,.16)"/>
+    <circle cx="94" cy="278" r="4" fill="#f2cc60"/><text x="106" y="283" fill="#f2cc60">Dias</text>
+    <rect x="162" y="262" width="87" height="32" rx="16" fill="rgba(242,204,96,.16)"/>
+    <circle cx="182" cy="278" r="4" fill="#f2cc60"/><text x="194" y="283" fill="#f2cc60">Horas</text>
+    <rect x="259" y="262" width="103" height="32" rx="16" fill="rgba(242,204,96,.16)"/>
+    <circle cx="279" cy="278" r="4" fill="#f2cc60"/><text x="291" y="283" fill="#f2cc60">Minutos</text>
+    <rect x="372" y="262" width="111" height="32" rx="16" fill="rgba(242,204,96,.16)"/>
+    <circle cx="392" cy="278" r="4" fill="#f2cc60"/><text x="404" y="283" fill="#f2cc60">Segundos</text>
+  </g>
+
+  <g transform="translate(700,64)">
+    <rect width="428" height="252" rx="18" fill="#0d1117" filter="url(#sombra)"/>
+    <g clip-path="url(#recorte)">
+    <rect width="428" height="252" rx="18" fill="#0d1117"/>
+    <path d="M0 18a18 18 0 0 1 18-18h392a18 18 0 0 1 18 18v12H0z" fill="#161b22"/>
+    <circle cx="22" cy="16" r="4.5" fill="#ff5f57"/><circle cx="38" cy="16" r="4.5" fill="#febc2e"/><circle cx="54" cy="16" r="4.5" fill="#28c840"/>
+    <text x="241" y="20" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace,'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji'" font-size="11" fill="#7d8590">script.js</text>
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace,'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji'" font-size="12.68" fill="#c9d1d9">
+    <text x="20" y="58.7" xml:space="preserve"><tspan fill="#79c0ff">import</tspan><tspan> Countdown </tspan><tspan fill="#79c0ff">from</tspan><tspan> </tspan><tspan fill="#7ee787">'./countdown.js'</tspan><tspan>;</tspan></text>
+    <text x="20" y="78.35" xml:space="preserve"><tspan></tspan></text>
+    <text x="20" y="98" xml:space="preserve"><tspan fill="#79c0ff">const</tspan><tspan> anoNovo = </tspan><tspan fill="#79c0ff">new</tspan><tspan> </tspan><tspan fill="#f2cc60">Countdown</tspan><tspan>(</tspan></text>
+    <text x="20" y="117.65" xml:space="preserve"><tspan>  </tspan><tspan fill="#7ee787">'31 December 2026 23:59:59 GMT-0300'</tspan></text>
+    <text x="20" y="137.3" xml:space="preserve"><tspan>);</tspan></text>
+    <text x="20" y="156.95" xml:space="preserve"><tspan></tspan></text>
+    <text x="20" y="176.6" xml:space="preserve"><tspan>console.</tspan><tspan fill="#d2a8ff">log</tspan><tspan>(anoNovo.total);</tspan></text>
+    <text x="20" y="196.25" xml:space="preserve"><tspan fill="#7d8590">// </tspan><tspan>{ days: </tspan><tspan fill="#f2cc60">93</tspan><tspan>, hours: </tspan><tspan fill="#f2cc60">1</tspan><tspan>, minutes: </tspan><tspan fill="#f2cc60">32</tspan><tspan>, seconds: </tspan><tspan fill="#f2cc60">33</tspan><tspan> }</tspan></text>
+    </g>
+    </g>
+  </g>
+</svg>
