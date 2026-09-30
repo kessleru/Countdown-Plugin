@@ -6,7 +6,7 @@
  * Sem dependências. Todo texto de terminal nas cenas lá embaixo é cópia de uma
  * execução real — se a saída mudar, cole a nova e rode de novo.
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const SAIDA = import.meta.dirname;
@@ -130,7 +130,7 @@ ${linhasSvg(linhas, { x: 20, y0: +(44 + alturaLinha * 0.75).toFixed(1), alturaLi
     </g>`;
 }
 
-function banner({ arquivo, titulo, tagline, stack, pills = [], cores, card, rotulo }) {
+function banner({ arquivo, titulo, tagline, stack, pills = [], cores, card, arte = '', defs = '', circulos = true, rotulo }) {
   const { de, ate, texto = '#ffffff', suave = 'rgba(255,255,255,.78)', circulo = '#ffffff', circuloOpacidade = 0.08 } = cores;
   const tamanhoTitulo = titulo.length > 16 ? 44 : 52;
 
@@ -163,11 +163,14 @@ function banner({ arquivo, titulo, tagline, stack, pills = [], cores, card, rotu
       <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity=".28"/>
     </filter>
     <clipPath id="recorte"><rect width="428" height="252" rx="18"/></clipPath>
+    <clipPath id="moldura"><rect width="1200" height="380" rx="24"/></clipPath>${defs}
   </defs>
 
   <rect width="1200" height="380" rx="24" fill="url(#bg)"/>
-  <circle cx="1105" cy="60" r="190" fill="${circulo}" opacity="${circuloOpacidade}"/>
-  <circle cx="110" cy="360" r="150" fill="${circulo}" opacity="${circuloOpacidade * 0.8}"/>
+${circulos ? `  <circle cx="1105" cy="60" r="190" fill="${circulo}" opacity="${circuloOpacidade}"/>
+  <circle cx="110" cy="360" r="150" fill="${circulo}" opacity="${circuloOpacidade * 0.8}"/>` : ''}
+  <g clip-path="url(#moldura)">${arte}
+  </g>
 
   <text x="72" y="148" font-family="${FONTE_UI}" font-size="${tamanhoTitulo}" font-weight="800" letter-spacing="-1" fill="${texto}">${escapar(titulo)}</text>
   <text x="74" y="196" font-family="${FONTE_UI}" font-size="24" font-weight="600" fill="${texto}">${escapar(tagline)}</text>
@@ -177,15 +180,38 @@ function banner({ arquivo, titulo, tagline, stack, pills = [], cores, card, rotu
     ${pillsSvg}
   </g>
 
-  <g transform="translate(700,64)">
+${card ? `  <g transform="translate(700,64)">
     <rect width="428" height="252" rx="18" fill="${card.fundo ?? '#ffffff'}" filter="url(#sombra)"/>
     <g clip-path="url(#recorte)">${card.conteudo}
     </g>
-  </g>
+  </g>` : ''}
 </svg>
 `;
   writeFileSync(join(SAIDA, arquivo), svg);
   console.log(`✓ ${arquivo}  (1200×380)`);
+}
+
+/**
+ * Embute um SVG do próprio repositório (logo, ícone) dentro do banner, na
+ * caixa x/y/largura/altura. Ids ganham prefixo para não colidirem entre si.
+ * `trocar` substitui cores literais (ex.: { white: '#1a1a1a' }).
+ */
+function svgArquivo(caminho, { x, y, largura, altura, trocar = {}, extra = '' }) {
+  let bruto = readFileSync(join(SAIDA, '..', '..', caminho), 'utf8')
+    .replace(/<\?xml[^>]*>/g, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+  const raiz = bruto.match(/<svg[ >][^>]*>/)[0];
+  const viewBox =
+    (raiz.match(/viewBox="([^"]+)"/) ?? [])[1] ??
+    `0 0 ${parseFloat(raiz.match(/width="([^"]+)"/)[1])} ${parseFloat(raiz.match(/height="([^"]+)"/)[1])}`;
+  const prefixo = caminho.replace(/[^a-z0-9]/gi, '');
+  let miolo = bruto.slice(bruto.indexOf(raiz) + raiz.length, bruto.lastIndexOf('</svg>'));
+  miolo = miolo
+    .replace(/id="([^"]+)"/g, `id="${prefixo}-$1"`)
+    .replace(/url\(#([^)]+)\)/g, `url(#${prefixo}-$1)`)
+    .replace(/href="#([^"]+)"/g, `href="#${prefixo}-$1"`);
+  for (const [de, para] of Object.entries(trocar)) miolo = miolo.split(`"${de}"`).join(`"${para}"`);
+  return `<svg x="${x}" y="${y}" width="${largura}" height="${altura}" viewBox="${viewBox}" ${extra}>${miolo.trim()}</svg>`;
 }
 
 // Atalhos ANSI para escrever as cenas
@@ -207,6 +233,16 @@ const _ = '\x1b[0m';
 const n = (x) => `${am}${x}${_}`;
 const total = (d, h, m, s) => `{ days: ${n(d)}, hours: ${n(h)}, minutes: ${n(m)}, seconds: ${n(s)} }`;
 
+// Arte do banner: o `.total` da execução acima como um painel de relógio flip.
+const bloco = (x, valor, rotulo) => `
+    <g transform="translate(${x},0)">
+      <rect width="92" height="112" rx="12" fill="#1e293b"/>
+      <rect y="56" width="92" height="56" rx="12" fill="#0f172a"/>
+      <rect y="55" width="92" height="2" fill="#0b1120"/>
+      <text x="46" y="80" text-anchor="middle" font-family="ui-monospace,Consolas,monospace" font-size="54" font-weight="700" fill="#f2cc60">${valor}</text>
+      <text x="46" y="136" text-anchor="middle" font-family="system-ui,'Segoe UI',sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#94a3b8">${rotulo}</text>
+    </g>`;
+
 banner({
   arquivo: 'banner.svg',
   titulo: 'Countdown',
@@ -219,22 +255,14 @@ banner({
     { texto: 'Minutos', fundo: 'rgba(242,204,96,.16)', cor: '#f2cc60' },
     { texto: 'Segundos', fundo: 'rgba(242,204,96,.16)', cor: '#f2cc60' },
   ],
-  card: {
-    fundo: '#0d1117',
-    conteudo: cardTerminal({
-      titulo: 'script.js',
-      linhas: [
-        `${az}import${_} Countdown ${az}from${_} ${v}'./countdown.js'${_};`,
-        ``,
-        `${az}const${_} anoNovo = ${az}new${_} ${am}Countdown${_}(`,
-        `  ${v}'31 December 2026 23:59:59 GMT-0300'${_}`,
-        `);`,
-        ``,
-        `console.${mg}log${_}(anoNovo.total);`,
-        `${f}// ${_}${total(93, 1, 32, 33)}`,
-      ],
-    }),
-  },
+  arte: `
+  <g transform="translate(716,96)" filter="url(#sombra)">
+    ${bloco(0, '93', 'DIAS')}
+    ${bloco(110, '01', 'HORAS')}
+    ${bloco(220, '32', 'MIN')}
+    ${bloco(330, '33', 'SEG')}
+  </g>
+  <text x="936" y="290" text-anchor="middle" font-family="ui-monospace,Consolas,monospace" font-size="14" fill="#94a3b8">new Countdown('31 December 2026 23:59:59 GMT-0300').total</text>`,
 });
 
 terminal({
